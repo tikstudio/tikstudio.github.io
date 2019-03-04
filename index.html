@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>React Redux</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <h1>React Redux</h1>
+        </section>
+
+
+        <section>
+            <div>Installation</div>
+            <pre>
+<code>
+npm install --save redux
+npm install --save react-redux
+</code>
+            </pre>
+        </section>
+
+
+        <section>
+            <img style="width: auto; height: 100%" src="./images/scr.png" height="540" width="298"/>
+        </section>
+
+
+        <section>
+            <div>
+                Provider React Redux provides 	&lt;Provider &frasl;&gt;, which makes the Redux store available to the rest of your app
+                <pre>
+<code >
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import {Provider} from 'react-redux'
+import {createStore} from 'redux'
+import * as serviceWorker from './serviceWorker';
+import appStore from './store/reducers'
+
+const store = createStore(appStore)
+
+ReactDOM.render(
+  &lt;Provider store={store}&gt;
+    &lt;App/&gt;
+  &lt;/Provider&gt;,
+  document.getElementById('root')
+);
+</code>
+                </pre>
+            </div>
+        </section>
+
+
+        <section>
+            <sup>Action</sup>
+            <pre>
+<code>
+export const TEST_DATA = 'TEST_DATA';
+
+export function setTestData(data1, data2) {
+  return {
+    type: TEST_DATA, payload: {data1, data2}
+  }
+}
+</code>
+            </pre>
+        </section>
+
+
+
+        <section>
+            <sup>Reducer</sup>
+            <pre>
+<code>
+import {TEST_DATA} from "../actions";
+
+const initialState = {
+  data1: 0,
+  data2: 0
+}
+
+function reducer(state = initialState, action) {
+  switch (action.type) {
+    case TEST_DATA: {
+      const {data1, data2} = action.payload
+      return {
+        ...state,
+        data1,
+        data2,
+      }
+    }
+    default: {
+      return state
+    }
+  }
+}
+
+export default reducer
+
+</code>
+            </pre>
+        </section>
+
+
+
+        <section>
+            <sub>./App.js</sub>
+            <pre>
+<code>
+import React, {Component} from 'react';
+import {setTestData} from "./store/actions";
+import {connect} from "react-redux";
+
+class App extends Component {
+  handleClick = () => {
+    this.props.setTestData(1, 2)
+  }
+
+  render() {
+    console.log(this.props.data1);
+    console.log(this.props.data2);
+    return (
+      &lt;div className="App"&gt;
+        &lt;button onClick={this.handleClick}&gt;
+          test
+        &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  data1: state.data1,
+  data2: state.data2,
+});
+
+const mapDispatchToProps = {
+  setTestData
+};
+
+const AppContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);
+
+export default AppContainer;
+</code>
+            </pre>
+        </section>
+    </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+  // More info about config & dependencies:
+  // - https://github.com/hakimel/reveal.js#configuration
+  // - https://github.com/hakimel/reveal.js#dependencies
+  Reveal.initialize({
+    dependencies: [
+      {src: 'plugin/markdown/marked.js'},
+      {src: 'plugin/markdown/markdown.js'},
+      {src: 'plugin/notes/notes.js', async: true},
+      {
+        src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+          hljs.initHighlightingOnLoad();
+        }
+      }
+    ]
+  });
+</script>
+</body>
+</html>
