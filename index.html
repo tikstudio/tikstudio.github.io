@@ -47,9 +47,10 @@ npm install --save react-redux
 
         <section>
             <div>
-                Provider React Redux provides 	&lt;Provider &frasl;&gt;, which makes the Redux store available to the rest of your app
+                Provider React Redux provides &lt;Provider &frasl;&gt;, which makes the Redux store available to the
+                rest of your app
                 <pre>
-<code >
+<code>
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
@@ -88,7 +89,6 @@ export function setTestData(data1, data2) {
         </section>
 
 
-
         <section>
             <sup>Reducer</sup>
             <pre>
@@ -121,7 +121,6 @@ export default reducer
 </code>
             </pre>
         </section>
-
 
 
         <section>
@@ -167,6 +166,120 @@ const AppContainer = connect(
 export default AppContainer;
 </code>
             </pre>
+        </section>
+        <section>
+            <section>
+                <h3>Redux Thank</h3>
+                <pre><code>
+    npm install --save redux-thunk
+                </code></pre>
+                Redux Thunk middleware allows you to write action creators that return a function instead of an action.
+                The
+                thunk can be used to delay the dispatch of an action, or to dispatch only if a certain condition is met.
+                The
+                inner function receives the store methods dispatch and getState as parameters.
+
+            </section>
+            <section>
+                <h4>Installation</h4>
+                <pre><code>
+    import { createStore, applyMiddleware } from 'redux';
+    import thunk from 'redux-thunk';
+    import reducer from './store/reducers'
+
+    // mount it on the Store
+    const store = createStore(
+      reducer,
+      applyMiddleware(thunk)
+    );
+
+                </code></pre>
+            </section>
+            <section>
+                <h4>example</h4>
+                actions.js
+                <pre><code>
+    export function example(data) {
+      return (dispatch, getState) => {
+        setTimeout(() => {
+          dispatch(_example(data));
+        }, 1500)
+      }
+    }
+
+    export function _example(data) {
+      return {
+        type: ADD_TODO, payload: {data}
+      }
+    }
+                </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h3>Redux Saga</h3>
+                <pre><code>
+    npm install --save redux-saga
+                </code></pre>
+
+            </section>
+            <section>
+                <h4>Installation</h4>
+                <pre><code>
+    import { createStore, applyMiddleware } from 'redux';
+    import createSagaMiddleware from 'redux-saga'
+    import reducer from './store/reducers'
+    import watchers from './store/sagas'
+
+    // create the saga middleware
+    const sagaMiddleware = createSagaMiddleware()
+
+    // mount it on the Store
+    const store = createStore(
+      rootReducer,
+       applyMiddleware(sagaMiddleware)
+    );
+
+    // then run the saga
+    sagaMiddleware.run(watchers)
+                </code></pre>
+            </section>
+            <section>
+                <h4>example</h4>
+                sagas.js
+                <pre><code>
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+import Api from '../api.js'
+
+// worker Saga: will be fired on USER_FETCH_REQUESTED actions
+function* fetchUser(action) {
+   try {
+      const user = yield call(Api.fetchUser, action.payload.userId);
+      yield put({
+                type: "USER_FETCH_SUCCEEDED",
+                user: user
+            });
+   } catch (e) {
+      yield put({
+                type: "USER_FETCH_FAILED",
+                message: e.message
+            });
+   }
+}
+
+/*
+  Starts fetchUser on each dispatched `USER_FETCH_REQUESTED` action.
+  Allows concurrent fetches of user.
+*/
+function* watches() {
+    yield takeEvery("USER_FETCH_REQUESTED", fetchUser);
+    //or
+    yield takeLatest("USER_FETCH_REQUESTED", fetchUser);
+}
+
+export default watches;
+                </code></pre>
+            </section>
         </section>
     </div>
 </div>
